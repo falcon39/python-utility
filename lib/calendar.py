@@ -7,11 +7,9 @@ class Calendar(object):
         self.year = int(year)
         self.month = int(month)
         self.day = int(day)
-        '''
-        self.month_name = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER']
-        self.weekday_name = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-        self.month_num = 12
-        '''
+
+        self.column_num = 3
+        self.row_num = math.floor(12 / self.column_num)
         self.all_days = [
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
@@ -36,9 +34,7 @@ class Calendar(object):
 
         # うるう年の場合、要素の末尾("29")を削る
         if not self.check_leapyear(year):
-            #print(str(year) + "年はうるう年じゃないよ")
             if(month == 2):
-                #print("うるう年じゃない2月です〜")
                 days.pop()
 
         weekday = self.get_weekday(year, month, 1)
@@ -131,16 +127,15 @@ class Calendar(object):
         return line
 
     def get_calendar_year(self, year):
-        column_num = 3
-        row_num = math.floor(12 / column_num)
         target_month = 1
         flg_exit = False
         list_month = ['', '', '', '', '', '', '', '', '', '', '', '']
 
         common = Common()
 
-        for i in range(row_num):
-            for j in range(column_num):
+        for i in range(self.row_num):
+            for j in range(self.column_num):
+                #print("row_num:", i, "self.column_num:", j)
                 if target_month > common.month_num:
                     flg_exit = True
                     break

@@ -1,5 +1,7 @@
 import sys
 import datetime
+import math
+from lib.common import ConfigUtil
 from lib.calendar import Calendar
 from lib.weather import Weather
 from lib.news import News
@@ -27,7 +29,7 @@ def main():
         day = argv[3]
 
     view_calendar(year, month, day)
-    view_weather('Tokyo')
+    view_weather()
     view_news()
 
 def view_calendar(year, month, day):
@@ -40,18 +42,18 @@ def view_calendar(year, month, day):
     line3 = list(map(list, zip(*line2)))
 
     print('')
+    config = ConfigUtil()
+    column_num = int(config.get('calendar', 'column_num'))
+    row_num = math.floor(12 / column_num)
+    #print('column_num:', column_num, 'row_num:', row_num)
 
-    for x in line3:
-        print("  ".join(x[:4]))
+    for r in range(row_num):
+        for x in line3:
+            print("  ".join(x[column_num*r:column_num*(r+1)]))
 
-    for x in line3:
-        print("  ".join(x[4:8]))
 
-    for x in line3:
-        print("  ".join(x[8:]))
-
-def view_weather(city_name):
-    weather = Weather(city_name)
+def view_weather():
+    weather = Weather()
     weather.get_weather()
 
 def view_news():

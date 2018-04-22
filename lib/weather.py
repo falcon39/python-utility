@@ -4,13 +4,16 @@
 import sys
 import requests
 import json
+from lib.common import ConfigUtil
 
 class Weather(object):
-    def __init__(self, city_name):
-        self.city_name = city_name
-        self.units = 'metric'
-        self.api_key = 'YOUR_KEYS'
-        self.api_url = 'http://api.openweathermap.org/data/2.5/weather?q={city}&units={unit}&APPID={key}'
+    def __init__(self):
+        config = ConfigUtil()
+        self.city_name = config.get('weather', 'city_name')
+        self.units  = config.get('weather', 'units')
+        self.api_key = config.get('weather', 'api_key')
+        self.api_url  = config.get('weather', 'api_url')
+
         self.icons = {
             'unknown': [
                 "            ",
@@ -98,22 +101,25 @@ class Weather(object):
 
     def get_weather(self):
         url = self.api_url.format(city = self.city_name, unit = self.units, key = self.api_key)
-        #print(url)
         response = requests.get(url)
         data = json.loads(response.text)
 
         print('\033[1m------ WEATHER (' + data['name'] + ') ------\033[0m')
-        for icon in self.icons[data['weather'][0]['description']]:
+
+        # display weather icon
+        if data['weather'][0]['description'] in self.icons.keys():
+            value = self.icons[data['weather'][0]['description']]
+        else:
+            value = self.icons['unknown']
+
+        for icon in value:
             print(icon)
-        '''
-        for key in self.icons.keys():
-            print('***', key, '***')
-            for icon in self.icons[key]:
-                print(icon)
-            print('')
-        '''
+
+        # display weather descriptions
         print(data['weather'][0]['description'])
         print('')
+
+        # display tempureture
         print(data['main']['temp'], '°C')
         print('  min:', data['main']['temp_min'], '°C')
         print('  max:', data['main']['temp_max'], '°C')
